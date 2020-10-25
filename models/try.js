@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             unique: false,
         },
         choice: {
-            type: DataTypes.BOOLEAN,    // tiny int
+            type: DataTypes.TINYINT,    // tiny int
             allowNull: true,
             unique: false,
         },
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             unique: false,
         },
         test_type: {
-            type: DataTypes.BOOLEAN,    // tiny int
+            type: DataTypes.TINYINT,    // tiny int
             allowNull: false,
             unique: false,
         },
