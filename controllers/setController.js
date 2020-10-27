@@ -1,6 +1,6 @@
 const { Set, Question, QuestionImage, SolutionImage } = require("../models");
 
-const getSets = async (req, res) => {
+exports.getSets = async (req, res) => {
     try {
         // TODO : dealing with parameters
         const sets = await Set.findAll({
@@ -17,21 +17,23 @@ const getSets = async (req, res) => {
     }
 }
 
-const getSet = async(req, res) => {
+exports.getSet = async(req, res) => {
     try {
-        const set = await Set.findAll({
+        const set = await Set.findOne({
             where : { id : req.params.id },
             include : {
                 model : Question,
                 through : { attributes : [] },
                 include : [{
                         model : QuestionImage,
+                        as : "question_image",
                         attributes : {
                             exclude : ['createdAt', 'updatedAt', 'deletedAt']
                         }
                     },
                     {
                         model : SolutionImage,
+                        as : "solution_image",
                         attributes : {
                             exclude : ['createdAt', 'updatedAt', 'deletedAt']
                         }
@@ -52,6 +54,3 @@ const getSet = async(req, res) => {
         res.json(error);
     }
 }
-
-exports.getSets = getSets;
-exports.getSet = getSet;

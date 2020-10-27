@@ -80,10 +80,10 @@ db.Set.belongsToMany(db.Question, {through : QuestionSet});
 QuestionSet.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
 QuestionSet.belongsTo(db.Set, {foreignKey : "set_id", targetKey : "id"});
 
-db.Question.hasMany(db.QuestionImage, {foreignKey : "question_id", sourceKey : "id"});
+db.Question.hasMany(db.QuestionImage, {foreignKey : "question_id", sourceKey : "id", as : "question_image"});
 db.QuestionImage.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
 
-db.Question.hasMany(db.SolutionImage, {foreignKey : "question_id", sourceKey : "id"});
+db.Question.hasMany(db.SolutionImage, {foreignKey : "question_id", sourceKey : "id", as : "solution_image"});
 db.SolutionImage.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
 
 db.ListeningFile.hasMany(db.Question, {foreignKey : "listening_file_id", sourceKey : "id"});

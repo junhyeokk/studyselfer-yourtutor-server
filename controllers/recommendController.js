@@ -1,26 +1,11 @@
+const Sequelize = require("sequelize");
 const { Question, QuestionImage, SolutionImage, Bookmark } = require("../models");
 
-exports.getQuestions = async (req, res) => {
+exports.getRecommend = async (req, res) => {
     try {
-        // TODO : dealing with parameters
-        const questions = await Question.findAll({
-            attributes : {
-                exclude : ['createdAt', 'updatedAt', 'deletedAt']
-            }
-        });
-
-        res.json(questions);
-    } catch (error) {
-        console.log(error);
-        // TODO : error code
-        res.json(error);
-    }
-}
-
-exports.getQuestion = async (req, res) => {
-    try {
-        const question = await Question.findOne({
-            where : { id : req.params.id },
+        // TODO : request to deep learning server
+        const recommend = await Question.findAll({
+            limit : parseInt(req.query.limit) || null,
             include : [{
                 model : QuestionImage,
                 as : "question_image",
@@ -37,7 +22,6 @@ exports.getQuestion = async (req, res) => {
             },
             {
                 model : Bookmark,
-                where : { user_id : res.locals.userId },
                 // TODO : could be changed to req.user.id
                 attributes : {
                     exclude : ['createdAt', 'updatedAt', 'deletedAt', 'user_id', 'question_id']
@@ -45,10 +29,10 @@ exports.getQuestion = async (req, res) => {
             }],
             attributes : {
                 exclude : ['createdAt', 'updatedAt', 'deletedAt']
-            }
+            },
         });
 
-        res.json(question);
+        res.json(recommend);
     } catch(error) {
         console.log(error);
         // TODO : error code
