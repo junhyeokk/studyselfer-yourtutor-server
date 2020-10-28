@@ -54,6 +54,7 @@ db.User.belongsToMany(db.Set, {through : UserSet});
 db.Set.belongsToMany(db.User, {through : UserSet});
 UserSet.belongsTo(db.Set, {foreignKey : "set_id", targetKey : "id"});
 UserSet.belongsTo(db.User, {foreignKey : "user_id", targetKey : "id"});
+db.UserSet = UserSet;
 
 const QuestionSet = sequelize.define('QuestionSetRelation', {
     id: {

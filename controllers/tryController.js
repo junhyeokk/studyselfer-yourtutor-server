@@ -9,6 +9,7 @@ function time_convert(num)
 
 exports.postTry = async (req, res) => {
     try {
+        // TODO : bulk create
         const question = await Question.findByPk(req.body.question_id);
         const newTry = await Try.create({
             excluded_option : parseInt(req.body.excluded_option, 2),
