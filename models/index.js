@@ -20,7 +20,10 @@ db.Try = require("./try")(sequelize, Sequelize);
 db.Set = require("./set")(sequelize, Sequelize);
 db.QuestionImage = require("./questionImage")(sequelize, Sequelize);
 db.SolutionImage = require("./solutionImage")(sequelize, Sequelize);
-db.ListeningFile = require("./listeningFile")(sequelize, Sequelize);
+// db.ListeningFile = require("./listeningFile")(sequelize, Sequelize);
+db.GradeInfo = require("./gradeInfo")(sequelize, Sequelize);
+db.Part = require("./part")(sequelize, Sequelize);
+db.UserGrade = require("./userGrade")(sequelize, Sequelize);
 
 db.User.hasMany(db.Bookmark, {foreignKey : "user_id", sourceKey : "id" });
 db.Bookmark.belongsTo(db.User, {foreignKey : "user_id", targetKey : "id"});
@@ -63,11 +66,6 @@ const QuestionSet = sequelize.define('QuestionSetRelation', {
         autoIncrement: true,
         allowNull: false,
     },
-    set_number: {
-        type: Sequelize.DataTypes.TINYINT,
-        allowNull: false,
-        unique: false,
-    }
 }, {
     timestamps: true,
     paranoid: true,
@@ -80,6 +78,17 @@ db.Question.belongsToMany(db.Set, {through : QuestionSet});
 db.Set.belongsToMany(db.Question, {through : QuestionSet});
 QuestionSet.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
 QuestionSet.belongsTo(db.Set, {foreignKey : "set_id", targetKey : "id"});
+db.QuestionSet = QuestionSet;
+
+db.GradeInfo.hasOne(db.Set, {foreignKey : "grade_info_id", sourceKey : "id"});
+db.Set.belongsTo(db.GradeInfo, {foreignKey : "grade_info_id", targetKey : "id", as : "grade_info"});
+// TODO : test
+
+db.Part.hasMany(db.Set, {foreignKey : "part_id", sourceKey : "id"});
+db.Set.belongsTo(db.Part, {foreignKey : "part_id", targetKey : "id"});
+
+db.User.hasMany(db.UserGrade, {foreignKey : "user_id", sourceKey : "id"});
+db.UserGrade.belongsTo(db.User, {foreignKey : "user_id", targetKey : "id"});
 
 db.Question.hasMany(db.QuestionImage, {foreignKey : "question_id", sourceKey : "id", as : "question_image"});
 db.QuestionImage.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
@@ -87,7 +96,7 @@ db.QuestionImage.belongsTo(db.Question, {foreignKey : "question_id", targetKey :
 db.Question.hasMany(db.SolutionImage, {foreignKey : "question_id", sourceKey : "id", as : "solution_image"});
 db.SolutionImage.belongsTo(db.Question, {foreignKey : "question_id", targetKey : "id"});
 
-db.ListeningFile.hasMany(db.Question, {foreignKey : "listening_file_id", sourceKey : "id"});
-db.Question.belongsTo(db.ListeningFile, {foreignKey : "listening_file_id", targetKey : "id"});
+// db.ListeningFile.hasMany(db.Question, {foreignKey : "listening_file_id", sourceKey : "id"});
+// db.Question.belongsTo(db.ListeningFile, {foreignKey : "listening_file_id", targetKey : "id"});
 
 module.exports = db;

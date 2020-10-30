@@ -25,6 +25,16 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: false,
         },
+        correct_rate: {
+            type: DataTypes.DOUBLE,
+            allowNull: true,
+            unique: false,
+        },
+        grade_of_question: {
+            type: DataTypes.TINYINT,
+            allowNull: true,
+            unique: false,
+        }
     },
     {
         timestamps: true,

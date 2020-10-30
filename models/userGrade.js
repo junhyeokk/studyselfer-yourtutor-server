@@ -1,12 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('set', {
-        title: {
-            type: DataTypes.STRING(30),
+    return sequelize.define("userGrade", {
+        grade: {
+            type: DataTypes.TINYINT,
             allowNull: false,
-            unique: true,
-        },
-        // grade_info_id
-        // part_id
+            unique: false,
+        }
+        // user_id
     },
     {
         timestamps: true,

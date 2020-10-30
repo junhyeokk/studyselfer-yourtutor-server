@@ -1,4 +1,5 @@
-const { Question, QuestionImage, SolutionImage, Bookmark } = require("../models");
+const { Question, QuestionImage, SolutionImage, Bookmark, ListeningFile } = require("../models");
+const listeningFile = require("../models/listeningFile");
 
 exports.getQuestions = async (req, res) => {
     try {
@@ -22,27 +23,21 @@ exports.getQuestion = async (req, res) => {
         const question = await Question.findOne({
             where : { id : req.params.id },
             include : [{
-                model : QuestionImage,
-                as : "question_image",
-                attributes : {
-                    exclude : ['createdAt', 'updatedAt', 'deletedAt']
-                }
-            },
-            {
-                model : SolutionImage,
-                as : "solution_image",
-                attributes : {
-                    exclude : ['createdAt', 'updatedAt', 'deletedAt']
-                }
-            },
-            {
-                model : Bookmark,
-                where : { user_id : res.locals.userId },
-                // TODO : could be changed to req.user.id
-                attributes : {
-                    exclude : ['createdAt', 'updatedAt', 'deletedAt', 'user_id', 'question_id']
-                }
-            }],
+                    model : QuestionImage,
+                    as : "question_image",
+                    attributes : {
+                        exclude : ['createdAt', 'updatedAt', 'deletedAt']
+                    }
+                },
+                {
+                    model : SolutionImage,
+                    as : "solution_image",
+                    attributes : {
+                        exclude : ['createdAt', 'updatedAt', 'deletedAt']
+                    }
+                },
+                // TODO : Whether bookmarked or not
+            ],
             attributes : {
                 exclude : ['createdAt', 'updatedAt', 'deletedAt']
             }

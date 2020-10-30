@@ -1,35 +1,42 @@
+const { Op } = require("sequelize");
 const { Try, Question } = require("../models");
 
 function time_convert(num)
  { 
   var hours = Math.floor(num / 60);  
   var minutes = num % 60;
-  return hours + ":" + minutes;         
+  return hours + ":" + minutes;
 }
 
 exports.postTry = async (req, res) => {
     try {
-        // TODO : bulk create
-        const question = await Question.findByPk(req.body.question_id);
-        const newTry = await Try.create({
-            excluded_option : parseInt(req.body.excluded_option, 2),
-            // 01001
-            time_taken : time_convert(req.body.time_taken),
-            choice : req.body.choice,
-            is_correct : req.body.choice == question.correct_answer,
-            exited : req.body.exited,
-            test_type : req.body.test_type,
-            // 1 : evaluation
-            // 2 : recommendation
-            // 3 : normal test
-            user_id : res.locals.userId,
-            // TODO : could be changed to req.user.id
-            question_id : req.body.question_id,
-            set_id : req.body.set_id || null
-            // when test type is 3
-        });
+        const newTries = [];
+        for (const trial of req.body) {
+            const question = await Question.findByPk(trial.question_id);
+            const newTry = {
+                excluded_option : parseInt(trial.excluded_option, 2),
+                // 01001
+                time_taken : time_convert(trial.time_taken),
+                choice : trial.choice,
+                is_correct : trial.choice == question.correct_answer,
+                //  TODO : instead of is_correct, just score?
+                exited : trial.exited,
+                test_type : trial.test_type,
+                // 1 : evaluation
+                // 2 : recommendation
+                // 3 : normal test
+                user_id : res.locals.userId,
+                // TODO : could be changed to req.user.id
+                question_id : trial.question_id,
+                set_id : trial.set_id || null
+                // when test type is 3
+            };
 
-        res.json(newTry);
+            newTries.push(newTry);
+        }
+
+        const newRows = await Try.bulkCreate(newTries);
+        res.json(newRows);
     } catch (error) {
         console.log(error);
         // TODO : error code
@@ -39,7 +46,17 @@ exports.postTry = async (req, res) => {
 
 exports.getTry = async (req, res) => {
     try {
-        const where = {...req.query, user_id : res.locals.userId};
+        const since = req.query.since || "2000-1-1";
+        delete req.query.since;
+        const until = req.query.until || Date.now();
+        delete req.query.until;
+
+        const where = {
+            ...req.query,
+            user_id : res.locals.userId,
+            created_at : { [Op.between] : [new Date(since), new Date(until)] },
+        };
+
         const try_row = await Try.findAll({
             where,
             attributes : {

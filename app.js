@@ -1,3 +1,12 @@
+/*
+Program id : STS-S-1000-S
+Program name : app.js
+Writer : junhyeok(chlwnsgur205@naver.com)
+Date : 2020-10-30
+Version : 0.9
+Description : 
+- 서버 엔트리 포인트
+*/
 const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -10,8 +19,8 @@ const setRouter = require("./routers/setRouter");
 const questionRouter = require("./routers/questionRouter");
 const bookmarkRouter = require("./routers/bookmarkRouter");
 const tryRouter = require("./routers/tryRouter");
-const recommendRouter = require("./routers/recommendRouter");
-const authRouter = require("./routers/authRouter");
+const recommendRouter = require("./routers/recommendRouter");       // 추천 관련 라우터
+const authRouter = require("./routers/authRouter");                 // 인증 관련 라우터
 
 const app = express();
 sequelize.sync();
@@ -23,13 +32,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+// passport(nodejs 인증 라이브러리) 초기화
 app.use(passport.initialize());
 
 app.use(localsMiddleware);
 
 app.get("/", (req, res) => res.send("test"));   // test
 app.use("/auth", authRouter);
-app.use("/test", setRouter);
+app.use("/set", setRouter);
 app.use("/question", questionRouter);
 app.use("/bookmark", bookmarkRouter);
 app.use("/try", tryRouter);

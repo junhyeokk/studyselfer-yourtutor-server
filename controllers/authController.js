@@ -12,14 +12,18 @@ exports.handleKakaoCallback = (req, res) => {
         }
 
         req.login(user, {session : false}, (error) => {
-            if (error) {
+            try {
+                if (error) {
+                    res.json(error);
+                }
+
+                const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET);
+                // TODO : check expired
+                
+                res.json({token});
+            } catch (error) {
                 res.json(error);
             }
-
-            const token = jwt.sign(JSON.stringify(user), process.env.JWT_SECRET);
-            // TODO : check expired
-            
-            res.json({token});
         })
     })(req, res);
 }

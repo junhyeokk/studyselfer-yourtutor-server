@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
             unique: false,
         },
         choice: {
-            type: DataTypes.TINYINT,    // tiny int
+            type: DataTypes.TINYINT,
             allowNull: true,
             unique: false,
         },
-        is_correct: {
-            type: DataTypes.BOOLEAN,
+        earned_score: {
+            type: DataTypes.TINYINT,
             allowNull: true,
             unique: false,
         },
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             unique: false,
         },
         test_type: {
-            type: DataTypes.TINYINT,    // tiny int
+            type: DataTypes.TINYINT,
             allowNull: false,
             unique: false,
         },

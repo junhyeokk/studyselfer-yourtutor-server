@@ -38,7 +38,7 @@ exports.getBookmark = async (req, res) => {
 
 exports.deleteBookmark = async (req, res) => {
     try {
-        const where = {...req.query, user_id : res.locals.userId};
+        const where = {...req.body, user_id : res.locals.userId};
         const bookmark = await Bookmark.destroy({
             where,
         });
