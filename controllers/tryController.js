@@ -1,11 +1,10 @@
 const { Op } = require("sequelize");
-const { Try, Question } = require("../models");
+const { Try, Question, Set } = require("../models");
 
-function time_convert(num)
-{ 
-  var hours = Math.floor(num / 60);  
-  var minutes = num % 60;
-  return hours + ":" + minutes;
+function time_convert(num) {
+    var hours = Math.floor(num / 60);
+    var minutes = num % 60;
+    return hours + ":" + minutes;
 }
 // TODO : move time_convert function to middleware?
 
@@ -15,20 +14,20 @@ exports.postTry = async (req, res) => {
         for (const trial of req.body) {
             const question = await Question.findByPk(trial.question_id);
             const newTry = {
-                excluded_option : parseInt(trial.excluded_option, 2),
+                excluded_option: parseInt(trial.excluded_option, 2),
                 // 01001
-                time_taken : time_convert(trial.time_taken),
-                choice : trial.choice,
-                earned_score : (trial.choice == question.correct_answer) ? question.score : 0,
-                exited : trial.exited,
-                test_type : trial.test_type,
+                time_taken: time_convert(trial.time_taken),
+                choice: trial.choice,
+                earned_score: (trial.choice == question.correct_answer) ? question.score : 0,
+                exited: trial.exited,
+                test_type: trial.test_type,
                 // 1 : evaluation
                 // 2 : recommendation
                 // 3 : normal test
-                user_id : res.locals.userId,
+                user_id: res.locals.userId,
                 // TODO : could be changed to req.user.id
-                question_id : trial.question_id,
-                set_id : trial.set_id || null
+                question_id: trial.question_id,
+                set_id: trial.set_id || null
                 // when test type is 3
             };
 
@@ -53,18 +52,42 @@ exports.getTry = async (req, res) => {
 
         const where = {
             ...req.query,
-            user_id : res.locals.userId,
-            created_at : { [Op.between] : [new Date(since), new Date(until)] },
+            user_id: res.locals.userId,
+            created_at: { [Op.between]: [new Date(since), new Date(until)] },
         };
 
-        const try_row = await Try.findAll({
+        const try_rows = await Try.findAll({
             where,
-            attributes : {
-                exclude : ['createdAt', 'updatedAt', 'deletedAt']
-            }
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'deletedAt']
+            },
+            include: [{
+                    model : Question,
+                    include : [{
+                        model : Set,
+                        where : {
+                            part_id : {[Op.ne] : null},
+                        }
+                    }]
+                }
+            ]
         });
 
-        res.json(try_row);
+        const return_try_rows = [];
+        for (const try_row of try_rows) {
+            return_try_rows.push({
+                "id" : try_row.id,
+                "excluded_option" : try_row.excluded_option,
+                "time_taken" : try_row.time_taken,
+                "choice" : try_row.choice,
+                "earned_score" : try_row.earned_score,
+                "exited" : try_row.exited,
+                "test_type" : try_row.test_type,
+                "part" : try_row.question.sets[0].title,
+            });
+        }
+
+        res.json(return_try_rows);
     } catch (error) {
         console.log(error);
         // TODO : error code

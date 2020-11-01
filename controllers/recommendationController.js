@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const { Op } = require("sequelize");
 const { Question, QuestionImage, SolutionImage, Bookmark, Set, Part, Try } = require("../models");
 
 function time_convert(num) {
@@ -82,7 +82,14 @@ exports.postRecommendation = async (req, res) => {
         const newTries = [];
 
         for (const trial of req.body) {
-            const question = await Question.findByPk(trial.question_id);
+            // const question = await Question.findOne({
+            //     where : { id : trial.question_id },
+            //     include : {
+            //         model : Set,
+            //         where : { part_id : {[Op.ne] : null} }
+            //     }
+            // });
+
             const newTry = {
                 excluded_option: parseInt(trial.excluded_option, 2),
                 // 01001
@@ -97,8 +104,7 @@ exports.postRecommendation = async (req, res) => {
                 user_id: res.locals.userId,
                 // TODO : could be changed to req.user.id
                 question_id: trial.question_id,
-                set_id: req.params.id
-                // when test type is 3
+                // set_id: question.sets[0].id,
             };
             newTries.push(newTry);
         }
