@@ -1,13 +1,6 @@
 const { Op } = require("sequelize");
 const { Set, Question, QuestionImage, SolutionImage, Bookmark, GradeInfo, UserSet, Try } = require("../models");
 
-function time_convert(num) {
-    var hours = Math.floor(num / 60);
-    var minutes = num % 60;
-    return hours + ":" + minutes;
-}
-// TODO : move time_convert function to middleware?
-
 exports.getTests = async (req, res) => {
     try {
         const tests = await Set.findAll({
@@ -123,7 +116,7 @@ exports.postTest = async (req, res) => {
             const newTry = {
                 excluded_option: parseInt(trial.excluded_option, 2),
                 // 01001
-                time_taken: time_convert(trial.time_taken),
+                time_taken: trial.time_taken,
                 choice: trial.choice,
                 earned_score: (trial.choice == question.correct_answer) ? question.score : 0,
                 exited: trial.exited,

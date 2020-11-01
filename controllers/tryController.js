@@ -1,13 +1,6 @@
 const { Op } = require("sequelize");
 const { Try, Question, Set } = require("../models");
 
-function time_convert(num) {
-    var hours = Math.floor(num / 60);
-    var minutes = num % 60;
-    return hours + ":" + minutes;
-}
-// TODO : move time_convert function to middleware?
-
 exports.postTry = async (req, res) => {
     try {
         const newTries = [];
@@ -16,7 +9,7 @@ exports.postTry = async (req, res) => {
             const newTry = {
                 excluded_option: parseInt(trial.excluded_option, 2),
                 // 01001
-                time_taken: time_convert(trial.time_taken),
+                time_taken: trial.time_taken,
                 choice: trial.choice,
                 earned_score: (trial.choice == question.correct_answer) ? question.score : 0,
                 exited: trial.exited,
@@ -59,7 +52,7 @@ exports.getTry = async (req, res) => {
         const try_rows = await Try.findAll({
             where,
             attributes: {
-                exclude: ['createdAt', 'updatedAt', 'deletedAt']
+                // exclude: ['createdAt', 'updatedAt', 'deletedAt']
             },
             include: [{
                     model : Question,
@@ -80,10 +73,12 @@ exports.getTry = async (req, res) => {
                 "excluded_option" : try_row.excluded_option,
                 "time_taken" : try_row.time_taken,
                 "choice" : try_row.choice,
+                "correct_answer" : try_row.question.correct_answer,
                 "earned_score" : try_row.earned_score,
                 "exited" : try_row.exited,
                 "test_type" : try_row.test_type,
                 "part" : try_row.question.sets[0].title,
+                "created_at" : try_row.createdAt,
             });
         }
 

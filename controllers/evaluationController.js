@@ -1,4 +1,4 @@
-const { Part, Set, Question, QuestionImage, SolutionImage, UserSet } = require("../models");
+const { Part, Set, Question, QuestionImage, SolutionImage, UserSet, Try } = require("../models");
 
 exports.getPartsInfos = async (req, res) => {
     try {
@@ -24,6 +24,8 @@ exports.getPartsInfos = async (req, res) => {
 
 exports.postEvaluation = async (req, res) => {
     try {
+        let random_num = 0;
+
         if (req.body.parts) {
             await UserSet.destroy({
                 where : {
@@ -42,13 +44,42 @@ exports.postEvaluation = async (req, res) => {
             }
 
             await UserSet.bulkCreate(learned_chapters);
-        }
-        // TODO : change code to destroy chapter relation
+            // TODO : change code to destroy chapter relation
+        } else if (req.body.try) {
+            await Try.create({
+                excluded_option : parseInt(req.body.try.excluded_option, 2),
+                time_taken : req.body.try.time_taken,
+                exited : req.body.try.exited,
+                test_type : 1,
+                user_id : res.locals.userId,
+                question_id : req.body.try.question_id,
+            });
 
-        // TODO : get next question from deep learning server
+            random_num = Math.floor(Math.random() * 5) + 1
+        }
+
+        const result = {
+            "expected_grade" : 3,
+            "raw_score" : 70,
+            "standard_score" : 124,
+            "good" : ["jisu and log", "hamsu geukhan", "pyung myun gok sun"],
+            "bad" : ["sunyul and johap", "jiphap myungjae", "tongkae"]
+        }
+
+        if (random_num == 3) {
+            res.json(result)
+            res.end();
+        }
 
         const q_num = await Question.count();
-        const id = Math.floor(Math.random() * q_num) + 1;
+        let id = Math.floor(Math.random() * q_num) + 1;
+        let q = await Question.findByPk(id);
+
+        while (!q) {
+            id = Math.floor(Math.random() * q_num) + 1;
+            q = await Question.findByPk(id);
+        }
+        // TODO : get next question from deep learning server
 
         const question = await Question.findOne({
             where: { id: id },

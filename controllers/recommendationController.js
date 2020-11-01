@@ -1,12 +1,6 @@
 const { Op } = require("sequelize");
 const { Question, QuestionImage, SolutionImage, Bookmark, Set, Part, Try } = require("../models");
 
-function time_convert(num) {
-    var hours = Math.floor(num / 60);
-    var minutes = num % 60;
-    return hours + ":" + minutes;
-}
-// TODO : move time_convert function to middleware?
 exports.getRecommendation = async (req, res) => {
     try {
         // TODO : request to deep learning server
@@ -82,18 +76,18 @@ exports.postRecommendation = async (req, res) => {
         const newTries = [];
 
         for (const trial of req.body) {
-            // const question = await Question.findOne({
-            //     where : { id : trial.question_id },
-            //     include : {
-            //         model : Set,
-            //         where : { part_id : {[Op.ne] : null} }
-            //     }
-            // });
+            const question = await Question.findOne({
+                where : { id : trial.question_id },
+                include : {
+                    model : Set,
+                    where : { part_id : {[Op.ne] : null} }
+                }
+            });
 
             const newTry = {
                 excluded_option: parseInt(trial.excluded_option, 2),
                 // 01001
-                time_taken: time_convert(trial.time_taken),
+                time_taken: trial.time_taken,
                 choice: trial.choice,
                 earned_score: (trial.choice == question.correct_answer) ? question.score : 0,
                 exited: trial.exited,

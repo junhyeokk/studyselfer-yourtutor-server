@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             unique: false,
         },
         time_taken: {
-            type: DataTypes.TIME,
+            type: DataTypes.INTEGER,
             allowNull: false,
             unique: false,
         },
