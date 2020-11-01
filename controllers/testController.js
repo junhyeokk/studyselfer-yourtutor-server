@@ -81,18 +81,25 @@ exports.getTest = async (req, res) => {
                     question_id: question.id,
                 }
             });
+
+            return_question_images = [];
+            return_solution_images = [];
+            for (const question_image of question.question_image) {
+                return_question_images.push(question_image.question_image_url);
+            }
+
+            for (const solution_image of question.solution_image) {
+                return_solution.images.push(solution_image.solution_image_url);
+            }
+
             questions[question.QuestionSetRelation.question_number - 1] = {
                 "id": question.id,
                 "answer_type": question.answer_type,
                 "score": question.score,
-                "question_image": [],
-                "solution_image": [],
+                "question_image": return_question_images,
+                "solution_image": return_solution_images,
                 "correct_answer": question.correct_answer,
                 "bookmark": bookmark ? true : false,
-            }
-
-            for (const question_image of question.question_image) {
-                question[question.QuestionSetRelation.question_number - 1]["question_image"].push(question_image);
             }
         }
 
