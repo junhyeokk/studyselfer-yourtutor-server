@@ -55,8 +55,7 @@ exports.getSet = async (req, res) => {
                 as: "grade_info",
                 attributes: {
                     exclude: ["createdAt", "updatedAt", "deletedAt"]
-                }
-            }],
+                }}],
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'deletedAt']
             }

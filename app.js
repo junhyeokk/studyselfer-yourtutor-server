@@ -19,8 +19,9 @@ const setRouter = require("./routers/setRouter");
 const questionRouter = require("./routers/questionRouter");
 const bookmarkRouter = require("./routers/bookmarkRouter");
 const tryRouter = require("./routers/tryRouter");
-const recommendRouter = require("./routers/recommendRouter");       // 추천 관련 라우터
+const recommendationRouter = require("./routers/recommendationRouter");       // 추천 관련 라우터
 const authRouter = require("./routers/authRouter");                 // 인증 관련 라우터
+const testRouter = require("./routers/testRouter");
 
 const app = express();
 sequelize.sync();
@@ -43,7 +44,8 @@ app.use("/set", setRouter);
 app.use("/question", questionRouter);
 app.use("/bookmark", bookmarkRouter);
 app.use("/try", tryRouter);
-app.use("/recommend", recommendRouter);
+app.use("/test", testRouter);
+app.use("/recommendation", recommendationRouter);
 
 app.get("/authtest", passport.authenticate("jwt", {session : false}), (req, res) => res.send("asdf"));
 

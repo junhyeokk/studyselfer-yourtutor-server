@@ -2,11 +2,12 @@ const { Op } = require("sequelize");
 const { Try, Question } = require("../models");
 
 function time_convert(num)
- { 
+{ 
   var hours = Math.floor(num / 60);  
   var minutes = num % 60;
   return hours + ":" + minutes;
 }
+// TODO : move time_convert function to middleware?
 
 exports.postTry = async (req, res) => {
     try {
@@ -18,8 +19,7 @@ exports.postTry = async (req, res) => {
                 // 01001
                 time_taken : time_convert(trial.time_taken),
                 choice : trial.choice,
-                is_correct : trial.choice == question.correct_answer,
-                //  TODO : instead of is_correct, just score?
+                earned_score : (trial.choice == question.correct_answer) ? question.score : 0,
                 exited : trial.exited,
                 test_type : trial.test_type,
                 // 1 : evaluation
