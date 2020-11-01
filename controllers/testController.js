@@ -82,7 +82,7 @@ exports.getTest = async (req, res) => {
             }
 
             for (const solution_image of question.solution_image) {
-                return_solution.images.push(solution_image.solution_image_url);
+                return_solution_images.push(solution_image.solution_image_url);
             }
 
             questions[question.QuestionSetRelation.question_number - 1] = {
