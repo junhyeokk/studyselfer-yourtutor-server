@@ -4,6 +4,6 @@ const { getRecommendation, postRecommendation } = require("../controllers/recomm
 const recommendRouter = express.Router();
 
 recommendRouter.get("/", getRecommendation);
-recommendRouter.get("/", postRecommendation);
+recommendRouter.post("/", postRecommendation);
 
 module.exports = recommendRouter;

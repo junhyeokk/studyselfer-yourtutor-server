@@ -85,10 +85,14 @@ exports.getTest = async (req, res) => {
                 "id": question.id,
                 "answer_type": question.answer_type,
                 "score": question.score,
-                "question_image": question.question_image,
-                "solution_image": question.solution_image,
+                "question_image": [],
+                "solution_image": [],
                 "correct_answer": question.correct_answer,
                 "bookmark": bookmark ? true : false,
+            }
+
+            for (const question_image of question.question_image) {
+                question[question.QuestionSetRelation.question_number - 1]["question_image"].push(question_image);
             }
         }
 
@@ -163,7 +167,7 @@ exports.postTest = async (req, res) => {
             }
         }
 
-        res.json(newRows);
+        res.json("success");
     } catch (error) {
         console.log(error);
         // TODO : error code
