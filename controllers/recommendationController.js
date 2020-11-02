@@ -4,7 +4,13 @@ const { Question, QuestionImage, SolutionImage, Bookmark, Set, Part, Try } = req
 exports.getRecommendation = async (req, res) => {
     try {
         // TODO : request to deep learning server
-        const question_ids = [1, 2, 3];
+        const q_num = await Question.count();
+        const question_ids = [];
+        while (question_ids.length != 3) {
+            id = Math.floor(Math.random() * q_num) + 1;
+            q = await Question.findByPk(id);
+            if (q) question_ids.push(id);
+        }
 
         const questions = [];
         for (const id of question_ids) {
