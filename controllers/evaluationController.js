@@ -46,9 +46,13 @@ exports.postEvaluation = async (req, res) => {
             await UserSet.bulkCreate(learned_chapters);
             // TODO : change code to destroy chapter relation
         } else if (req.body.try) {
+            const question = await Question.findByPk(req.body.try.question_id);
+
             await Try.create({
                 excluded_option : parseInt(req.body.try.excluded_option, 2),
                 time_taken : req.body.try.time_taken,
+                choice : req.body.try.choice,
+                earned_score: (req.body.try.choice == question.correct_answer) ? question.score : 0,
                 exited : req.body.try.exited,
                 test_type : 1,
                 user_id : res.locals.userId,
