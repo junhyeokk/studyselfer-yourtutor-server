@@ -1,15 +1,50 @@
 const { Op } = require("sequelize");
+const fetch = require("node-fetch");
 const { Question, QuestionImage, SolutionImage, Bookmark, Set, Part, Try } = require("../models");
 
 exports.getRecommendation = async (req, res) => {
     try {
-        // TODO : request to deep learning server
-        const q_num = await Question.count();
         const question_ids = [];
-        while (question_ids.length != 3) {
-            id = Math.floor(Math.random() * q_num) + 1;
-            q = await Question.findByPk(id);
-            if (q) question_ids.push(id);
+        
+        const tries = await Try.findAll({
+            where : {
+                user_id: res.locals.userId,
+            },
+            include : [{
+                model: Question
+            }]
+        });
+
+        const correct_wrong_log = {
+            "correct" : [],
+            "wrong" : [],
+        }
+        for (const try_row of tries) {
+            if (try_row.earned_score == 0) {
+                correct_wrong_log["wrong"].push(try_row.question.source_of_question);
+            } else {
+                correct_wrong_log["correct"].push(try_row.question.source_of_question);
+            }
+        }
+
+        const next_questions = await fetch(process.env.AI_SERVER_ADDRESS + '/recommendation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(correct_wrong_log)
+        });
+
+        for (const next_question of next_questions.json()) {
+            const q = await Question.findOne({
+                where : { source_of_question : next_question[0] }
+            });
+
+            if (q) {
+                question_ids.push(q.id);
+            }
+
+            if (question_ids.length == 3) break;
         }
 
         const questions = [];
