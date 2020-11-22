@@ -59,21 +59,28 @@ exports.postEvaluation = async (req, res) => {
                 question_id : req.body.try.question_id,
             });
 
-            random_num = Math.floor(Math.random() * 5) + 1
+            random_num = Math.floor(Math.random() * 8) + 1
         }
 
         const result = {
             "expected_grade" : 3,
             "raw_score" : 70,
             "standard_score" : 124,
-            "good" : ["jisu and log", "hamsu geukhan", "pyung myun gok sun"],
-            "bad" : ["sunyul and johap", "jiphap myungjae", "tongkae"]
+            "good" : ["지수와 로그", "함수의 극한", "평면곡선"],
+            "bad" : ["순열과 조합", "집합과 명제", "통계"]
         }
 
-        if (random_num == 3) {
+//  	if (req.body.try) {
+//		if (req.body.try.choice == 1) {
+//			res.json(result)
+//			res.end();
+//		}
+//	}
+
+	if (random_num == 3) {
             res.json(result)
             res.end();
-        }
+       }
 
         const q_num = await Question.count();
         let id = Math.floor(Math.random() * q_num) + 1;
@@ -106,7 +113,7 @@ exports.postEvaluation = async (req, res) => {
         }
 
         for (const solution_image of question.solution_image) {
-            return_solution.images.push(solution_image.solution_image_url);
+            return_solution_images.push(solution_image.solution_image_url);
         }
 
         const return_question = {
